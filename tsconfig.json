@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs", // Измените на commonjs
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node" // Измените на node
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules"]
+}
