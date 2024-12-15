@@ -28,46 +28,35 @@ app.get("/", (req: Request, res: Response) => {
   res.send("API задач");
 });
 
-app.post("/tasks", (req: Request, res: Response) => {
+app.post("/tasks", async (req: Request, res: Response) => {
   const { title } = req.body;
   const task = new Task({ title });
-  
-  task.save()
-    .then(savedTask => res.send(savedTask))
-    .catch(err => res.send({ error: 'Ошибка при создании задачи', details: err }));
+  const savedTask = await task.save();
+  res.status(201).send(savedTask);
 });
 
-app.get("/tasks", (req: Request, res: Response) => {
-  Task.find()
-    .then(tasks => res.send(tasks))
-    .catch(err => res.send({ error: 'Ошибка при получении задач', details: err }));
+app.get("/tasks", async (req: Request, res: Response) => {
+  const tasks = await Task.find();
+  res.send(tasks);
 });
 
-app.put("/tasks/:id", (req: Request, res: Response) => {
+app.put("/tasks/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { completeness } = req.body;
+  const { title, completeness } = req.body;
 
-  Task.findByIdAndUpdate(id, { completeness }, { new: true })
-    .then(task => {
-      if (!task) {
-        return res.send('Задача не найдена');
-      }
-      res.send(task);
-    })
-    .catch(err => res.send({ error: 'Ошибка при обновлении задачи', details: err }));
+  const updatedTask = await Task.findByIdAndUpdate(
+    id,
+    { title, completeness },
+    { new: true }
+  );
+
+  res.send(updatedTask);
 });
 
-app.delete("/tasks/:id", (req: Request, res: Response) => {
+app.delete("/tasks/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-
-  Task.findByIdAndDelete(id)
-    .then(task => {
-      if (!task) {
-        return res.send('Задача не найдена');
-      }
-      res.send({ message: 'Задача удалена' });
-    })
-    .catch(err => res.send({ error: 'Ошибка при удалении задачи', details: err }));
+  await Task.findByIdAndDelete(id);
+  res.send({ message: "Задача удалена" });
 });
 
 app.listen(PORT, () => {
